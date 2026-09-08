@@ -20,7 +20,7 @@ let package = Package(
             branch: "main"
         ),
         .package(url: "https://github.com/swift-compositions/swift-xml.git", branch: "main"),
-        .package(url: "https://github.com/swift-compositions/swift-async.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-async-stream.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-iso/swift-iso-8601.git", branch: "main"),
     ],
@@ -55,7 +55,7 @@ let package = Package(
                 "Plist Core",
                 "Plist XML",
                 "Plist Binary",
-                .product(name: "Async", package: "swift-async"),
+                .product(name: "Async Stream", package: "swift-async-stream"),
             ]
         ),
         .testTarget(
