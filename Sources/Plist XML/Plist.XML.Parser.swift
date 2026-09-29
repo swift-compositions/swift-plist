@@ -1,4 +1,4 @@
-internal import Byte_Primitive
+internal import Byte
 import ISO_8601
 import Plist_Core
 import RFC_4648

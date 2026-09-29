@@ -35,7 +35,7 @@ let package = Package(
             name: "Plist XML",
             dependencies: [
                 "Plist Core",
-                .product(name: "Byte Primitive", package: "swift-byte"),
+                .product(name: "Byte", package: "swift-byte"),
                 .product(name: "XML", package: "swift-xml"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "ISO 8601", package: "swift-iso-8601"),
