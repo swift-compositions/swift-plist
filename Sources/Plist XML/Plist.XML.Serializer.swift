@@ -87,20 +87,21 @@ extension Plist.XML {
 extension Plist.XML {
     private static func formatDate(_ secondsSinceRef: Double) -> String {
 
-        let unixSeconds = Int(secondsSinceRef) + appleReferenceEpochOffset
+        let wholeSeconds = secondsSinceRef.rounded(.down)
+        let unixSeconds = Int(wholeSeconds) + appleReferenceEpochOffset
+        let nanoseconds = Int((secondsSinceRef - wholeSeconds) * 1_000_000_000)
+        let secondOfDay = (unixSeconds % 86_400 + 86_400) % 86_400
 
-        let fractionalPart = secondsSinceRef - Double(Int(secondsSinceRef))
-        let nanoseconds = Int(fractionalPart * 1_000_000_000)
-
-        let dateTime: ISO_8601.DateTime
-        do throws(ISO_8601.Date.Error) {
-            dateTime = try ISO_8601.DateTime(
-                secondsSinceEpoch: unixSeconds,
-                nanoseconds: nanoseconds,
-                timezoneOffsetSeconds: 0
+        guard
+            let date = try? ISO_8601.CalendarDate(daysSinceUnixEpoch: (unixSeconds - secondOfDay) / 86_400),
+            let dateTime = try? ISO_8601.DateTime(
+                date: date,
+                hour: secondOfDay / 3_600,
+                minute: secondOfDay % 3_600 / 60,
+                second: secondOfDay % 60,
+                nanoseconds: nanoseconds
             )
-        } catch {
-
+        else {
             return "2001-01-01T00:00:00Z"
         }
 

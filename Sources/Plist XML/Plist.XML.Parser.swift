@@ -172,7 +172,10 @@ extension Plist.XML {
             throw .invalidDateFormat(text)
         }
 
-        let unixSeconds = dateTime.epoch.seconds
+        let unixSeconds =
+            dateTime.date.daysSinceUnixEpoch * 86_400
+            + dateTime.hour * 3_600 + dateTime.minute * 60 + dateTime.second
+            - dateTime.offset.seconds
         let nanoseconds = dateTime.nanoseconds
         let appleSeconds =
             Double(unixSeconds - appleReferenceEpochOffset)
