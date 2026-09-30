@@ -57,7 +57,7 @@ extension Plist.XML {
             return flag ? XML.element("true") : XML.element("false")
 
         case .data(let bytes):
-            let base64 = RFC_4648.Base64.encode(bytes.lazy.map(Byte.init), padding: true)
+            let base64 = RFC_4648.Base64.encode(bytes.lazy.map(Byte.init(bitPattern:)), padding: true)
             let base64String = String(decoding: base64.lazy.map(\.underlying), as: UTF8.self)
             return XML.element("data", text: base64String)
 

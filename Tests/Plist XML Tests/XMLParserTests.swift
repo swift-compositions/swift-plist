@@ -1,4 +1,5 @@
 import Plist_XML
+import Standard_Library_Extensions
 import Testing
 
 extension Plist.XML {

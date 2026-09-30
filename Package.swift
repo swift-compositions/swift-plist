@@ -23,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/swift-molecules/swift-async-stream.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-iso/swift-iso-8601.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-standard-library-extensions.git", branch: "main"),
     ],
     targets: [
 
@@ -67,7 +68,8 @@ let package = Package(
         .testTarget(
             name: "Plist XML Tests",
             dependencies: [
-                "Plist XML"
+                "Plist XML",
+                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),
         .testTarget(
