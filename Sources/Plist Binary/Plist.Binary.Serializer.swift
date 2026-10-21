@@ -204,7 +204,9 @@ extension Plist.Binary.Writer {
 
         let refSize = bytesNeeded(for: UInt64(objects.count))
         for element in elements {
-            let ref = uniqueObjects[element]!
+            guard let ref = uniqueObjects[element] else {
+                preconditionFailure("Every object is registered in uniqueObjects before references are written")
+            }
             writeBigEndian(UInt64(ref), size: refSize)
         }
     }
@@ -215,12 +217,16 @@ extension Plist.Binary.Writer {
         let refSize = bytesNeeded(for: UInt64(objects.count))
 
         for member in members {
-            let keyRef = uniqueObjects[.string(member.key)]!
+            guard let keyRef = uniqueObjects[.string(member.key)] else {
+                preconditionFailure("Every object is registered in uniqueObjects before references are written")
+            }
             writeBigEndian(UInt64(keyRef), size: refSize)
         }
 
         for member in members {
-            let valueRef = uniqueObjects[member.value]!
+            guard let valueRef = uniqueObjects[member.value] else {
+                preconditionFailure("Every object is registered in uniqueObjects before references are written")
+            }
             writeBigEndian(UInt64(valueRef), size: refSize)
         }
     }

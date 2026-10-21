@@ -16,12 +16,14 @@ extension Plist.Format {
         guard bytes.count >= 6 else { return nil }
 
         var iterator = bytes.makeIterator()
-        let b0 = iterator.next()!
-        let b1 = iterator.next()!
-        let b2 = iterator.next()!
-        let b3 = iterator.next()!
-        let b4 = iterator.next()!
-        let b5 = iterator.next()!
+        guard
+            let b0 = iterator.next(),
+            let b1 = iterator.next(),
+            let b2 = iterator.next(),
+            let b3 = iterator.next(),
+            let b4 = iterator.next(),
+            let b5 = iterator.next()
+        else { return nil }
 
         if b0 == 0x62,
             b1 == 0x70,
@@ -46,11 +48,13 @@ extension Plist.Format {
         guard remaining.count >= 5 else { return nil }
 
         var remainingIterator = remaining.makeIterator()
-        let r0 = remainingIterator.next()!
-        let r1 = remainingIterator.next()!
-        let r2 = remainingIterator.next()!
-        let r3 = remainingIterator.next()!
-        let r4 = remainingIterator.next()!
+        guard
+            let r0 = remainingIterator.next(),
+            let r1 = remainingIterator.next(),
+            let r2 = remainingIterator.next(),
+            let r3 = remainingIterator.next(),
+            let r4 = remainingIterator.next()
+        else { return nil }
 
         if r0 == 0x3C,
             r1 == 0x3F,
