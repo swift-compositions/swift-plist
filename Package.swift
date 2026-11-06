@@ -35,7 +35,7 @@ let package = Package(
         .target(
             name: "Plist XML",
             dependencies: [
-                "Plist Core",
+                .target(name: "Plist Core"),
                 .product(name: "Byte", package: "swift-byte"),
                 .product(name: "XML", package: "swift-xml"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
@@ -46,36 +46,36 @@ let package = Package(
         .target(
             name: "Plist Binary",
             dependencies: [
-                "Plist Core"
+                .target(name: "Plist Core")
             ]
         ),
 
         .target(
             name: "Plist",
             dependencies: [
-                "Plist Core",
-                "Plist XML",
-                "Plist Binary",
+                .target(name: "Plist Core"),
+                .target(name: "Plist XML"),
+                .target(name: "Plist Binary"),
                 .product(name: "Async Stream", package: "swift-async-stream"),
             ]
         ),
         .testTarget(
             name: "Plist Tests",
             dependencies: [
-                "Plist"
+                .target(name: "Plist")
             ]
         ),
         .testTarget(
             name: "Plist XML Tests",
             dependencies: [
-                "Plist XML",
+                .target(name: "Plist XML"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),
         .testTarget(
             name: "Plist Binary Tests",
             dependencies: [
-                "Plist Binary"
+                .target(name: "Plist Binary")
             ]
         ),
     ],
