@@ -1,7 +1,9 @@
 import Plist_Binary
 import Testing
 
-extension Plist.Binary {
+enum `Plist.Binary Tests` {}
+
+extension `Plist.Binary Tests` {
     @Suite
     struct `Plist Binary Parser Tests` {
         @Test
@@ -158,7 +160,7 @@ extension Plist.Binary {
     }
 }
 
-extension Plist.Binary {
+extension `Plist.Binary Tests` {
     @Suite
     struct `Plist Binary Serializer Tests` {
         @Test

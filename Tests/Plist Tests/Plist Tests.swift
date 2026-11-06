@@ -1,7 +1,9 @@
 import Plist
 import Testing
 
-extension Plist.Value {
+enum `Plist.Value Tests` {}
+
+extension `Plist.Value Tests` {
     @Suite
     struct Test {
         @Test
@@ -96,7 +98,9 @@ extension Plist.Value {
     }
 }
 
-extension Plist {
+enum `Plist Tests` {}
+
+extension `Plist Tests` {
     @Suite
     struct Test {
         @Test
@@ -154,7 +158,9 @@ extension Plist {
     }
 }
 
-extension Plist.Format {
+enum `Plist.Format Tests` {}
+
+extension `Plist.Format Tests` {
     @Suite
     struct Test {
         @Test

@@ -2,7 +2,9 @@ import Plist_XML
 import Standard_Library_Extensions
 import Testing
 
-extension Plist.XML {
+enum `Plist.XML Tests` {}
+
+extension `Plist.XML Tests` {
     @Suite
     struct Parser {
         @Test
@@ -180,7 +182,7 @@ extension Plist.XML {
     }
 }
 
-extension Plist.XML {
+extension `Plist.XML Tests` {
     @Suite
     struct Serializer {
         @Test
