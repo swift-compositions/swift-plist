@@ -1,7 +1,6 @@
 import Plist_Core
 
 extension Plist.Binary {
-
     public static func serialize(_ plist: Plist) -> [UInt8] {
         let writer = Writer()
         writer.write(plist)
@@ -10,7 +9,6 @@ extension Plist.Binary {
 }
 
 extension Plist.Binary {
-
     final class Writer {
         var bytes: [UInt8] = []
         var objects: [ObjectRef] = []
@@ -28,12 +26,11 @@ extension Plist.Binary.Writer {
 
 extension Plist.Binary.Writer {
     func write(_ plist: Plist) {
-
         let rootIndex = collectObjects(plist.value)
 
         writeHeader()
 
-        for i in 0..<objects.count {
+        (0..<objects.count).forEach { i in
             objectOffsets.append(bytes.count)
             writeObject(objects[i].value)
         }
@@ -56,7 +53,6 @@ extension Plist.Binary.Writer {
 
 extension Plist.Binary.Writer {
     func collectObjects(_ value: Plist.Value) -> Int {
-
         if let existingIndex = uniqueObjects[value] {
             return existingIndex
         }
@@ -87,7 +83,6 @@ extension Plist.Binary.Writer {
 
 extension Plist.Binary.Writer {
     func writeHeader() {
-
         bytes.append(contentsOf: [0x62, 0x70, 0x6C, 0x69, 0x73, 0x74, 0x30, 0x30])
     }
 }
@@ -141,7 +136,6 @@ extension Plist.Binary.Writer {
                 size = 8
             }
         } else {
-
             if value >= Int8.min {
                 size = 1
             } else if value >= Int16.min {
@@ -182,14 +176,12 @@ extension Plist.Binary.Writer {
     }
 
     func writeString(_ text: String) {
-
         let isASCII = text.utf8.allSatisfy { $0 < 128 }
 
         if isASCII {
             writeMarkerWithLength(Plist.Binary.Marker.asciiType, length: text.utf8.count)
             bytes.append(contentsOf: text.utf8)
         } else {
-
             let utf16 = Array(text.utf16)
             writeMarkerWithLength(Plist.Binary.Marker.unicodeType, length: utf16.count)
             for codeUnit in utf16 {
@@ -259,7 +251,6 @@ extension Plist.Binary.Writer {
         topObject: UInt64,
         offsetTableOffset: UInt64
     ) {
-
         bytes.append(contentsOf: [0, 0, 0, 0, 0])
 
         bytes.append(0)
