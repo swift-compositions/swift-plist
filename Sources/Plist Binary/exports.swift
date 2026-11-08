@@ -1,1 +1,1 @@
-@_exported import Plist_Core
+@_exported public import Plist_Core

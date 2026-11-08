@@ -1,2 +1,2 @@
-@_exported import Plist_Core
-@_exported import XML
+@_exported public import Plist_Core
+@_exported public import XML
