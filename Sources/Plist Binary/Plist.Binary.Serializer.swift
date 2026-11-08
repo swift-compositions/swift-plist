@@ -18,6 +18,10 @@ extension Plist.Binary {
 }
 
 extension Plist.Binary.Writer {
+    struct ObjectRef {
+        let value: Plist.Value
+        var offset: Int = 0
+    }
 }
 
 extension Plist.Binary.Writer {
