@@ -18,7 +18,7 @@ extension Plist.Binary {
 }
 
 extension Plist.Binary.Writer {
-    struct ObjectRef {
+    fileprivate struct ObjectRef {
         let value: Plist.Value
         var offset: Int = 0
     }
