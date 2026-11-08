@@ -39,12 +39,12 @@ extension Plist.Binary.Marker {
 extension Plist.Binary.Marker {
 
     @inlinable
-    static func highNibble(_ byte: UInt8) -> UInt8 {
+    package static func highNibble(_ byte: UInt8) -> UInt8 {
         byte & 0xF0
     }
 
     @inlinable
-    static func lowNibble(_ byte: UInt8) -> UInt8 {
+    package static func lowNibble(_ byte: UInt8) -> UInt8 {
         byte & 0x0F
     }
 
