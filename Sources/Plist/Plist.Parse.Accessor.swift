@@ -71,11 +71,6 @@ extension Plist.Parse {
 }
 
 extension Plist {
-
-    public struct Prepared: Sendable {
-        @usableFromInline
-        internal init() {}
-    }
 }
 
 extension Plist.Prepared {
@@ -111,11 +106,6 @@ extension Plist.Prepared {
 }
 
 extension Plist {
-
-    public struct Located: Sendable {
-        @usableFromInline
-        internal init() {}
-    }
 }
 
 extension Plist.Located {
@@ -164,19 +154,6 @@ extension Plist.Located {
 }
 
 extension Plist {
-
-    public struct LocatedError: Swift.Error, Sendable, Hashable {
-
-        public let error: Plist.Error
-
-        public let offset: Int
-
-        @inlinable
-        public init(_ error: Plist.Error, at offset: Int) {
-            self.error = error
-            self.offset = offset
-        }
-    }
 }
 
 extension Plist.LocatedError: CustomStringConvertible {
