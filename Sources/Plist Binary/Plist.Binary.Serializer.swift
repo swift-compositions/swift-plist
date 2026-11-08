@@ -126,24 +126,24 @@ extension Plist.Binary.Writer {
         let size: Int
 
         if value >= 0 {
-            if unsigned <= 0xFF {
-                size = 1
+            size = if unsigned <= 0xFF {
+                1
             } else if unsigned <= 0xFFFF {
-                size = 2
+                2
             } else if unsigned <= 0xFFFF_FFFF {
-                size = 4
+                4
             } else {
-                size = 8
+                8
             }
         } else {
-            if value >= Int8.min {
-                size = 1
+            size = if value >= Int8.min {
+                1
             } else if value >= Int16.min {
-                size = 2
+                2
             } else if value >= Int32.min {
-                size = 4
+                4
             } else {
-                size = 8
+                8
             }
         }
 
