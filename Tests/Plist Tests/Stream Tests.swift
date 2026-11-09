@@ -258,6 +258,32 @@ struct Test {
     }
 
     @Test
+    func `ND stream yields sourceSequenceFailure when the source throws`() async throws {
+        struct SourceFailure: Swift.Error {}
+
+        let line = "<?xml version=\"1.0\"?><plist version=\"1.0\"><integer>1</integer></plist>\n<?xml"
+        let bytes = AsyncThrowingStream<UInt8, any Swift.Error> { continuation in
+            for byte in line.utf8 {
+                continuation.yield(byte)
+            }
+            continuation.finish(throwing: SourceFailure())
+        }
+
+        let results = try await collect(Plist.ND.stream(bytes))
+
+        #expect(results.count == 2)
+        if case .some(.success(let plist)) = results.first {
+            #expect(plist.value == .integer(1))
+        } else {
+            Issue.record("Expected the complete first line to parse")
+        }
+        guard case .some(.failure(.sourceSequenceFailure)) = results.last else {
+            Issue.record("Expected .sourceSequenceFailure, got \(String(describing: results.last))")
+            return
+        }
+    }
+
+    @Test
     func `Deserialize from async bytes`() async throws {
         let input = """
             <?xml version="1.0"?><plist version="1.0"><integer>42</integer></plist>

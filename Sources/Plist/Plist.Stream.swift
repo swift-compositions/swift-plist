@@ -95,9 +95,8 @@ extension Plist.ND.State {
                 byte = try await iterator.next()
             } catch {
                 done = true
-                if buffer.isEmpty { return nil }
-                defer { buffer.removeAll() }
-                return parseLine()
+                buffer.removeAll()
+                return .failure(.sourceSequenceFailure("\(error)"))
             }
 
             guard let byte else {
