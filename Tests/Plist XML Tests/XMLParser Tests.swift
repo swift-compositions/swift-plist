@@ -186,18 +186,18 @@ extension `Plist.XML Tests` {
     @Suite
     struct Serializer {
         @Test
-        func `Serialize string`() {
+        func `Serialize string`() throws {
             let plist = Plist.string("Hello")
-            let bytes = Plist.XML.serialize(plist)
+            let bytes = try Plist.XML.serialize(plist)
             let xml = String(decoding: bytes, as: UTF8.self)
 
             #expect(xml.contains("<string>Hello</string>"))
         }
 
         @Test
-        func `Serialize emits version attribute and DOCTYPE`() {
+        func `Serialize emits version attribute and DOCTYPE`() throws {
             let plist = Plist.string("hello")
-            let xml = String(decoding: Plist.XML.serialize(plist), as: UTF8.self)
+            let xml = String(decoding: try Plist.XML.serialize(plist), as: UTF8.self)
 
             #expect(xml.contains("<plist version=\"1.0\">"))
             #expect(
@@ -216,39 +216,82 @@ extension `Plist.XML Tests` {
         }
 
         @Test
-        func `Serialize integer`() {
+        func `Serialize integer`() throws {
             let plist = Plist.integer(42)
-            let bytes = Plist.XML.serialize(plist)
+            let bytes = try Plist.XML.serialize(plist)
             let xml = String(decoding: bytes, as: UTF8.self)
 
             #expect(xml.contains("<integer>42</integer>"))
         }
 
         @Test
-        func `Serialize boolean`() {
+        func `Serialize boolean`() throws {
             let trueValue = Plist.bool(true)
             let falseValue = Plist.bool(false)
 
-            let trueXml = String(decoding: Plist.XML.serialize(trueValue), as: UTF8.self)
-            let falseXml = String(decoding: Plist.XML.serialize(falseValue), as: UTF8.self)
+            let trueXml = String(decoding: try Plist.XML.serialize(trueValue), as: UTF8.self)
+            let falseXml = String(decoding: try Plist.XML.serialize(falseValue), as: UTF8.self)
 
             #expect(trueXml.contains("<true/>") || trueXml.contains("<true></true>"))
             #expect(falseXml.contains("<false/>") || falseXml.contains("<false></false>"))
         }
 
         @Test
-        func `Serialize dictionary`() {
+        func `Serialize dictionary`() throws {
             let plist: Plist = [
                 "name": "Bob",
                 "age": 25,
             ]
 
-            let bytes = Plist.XML.serialize(plist)
+            let bytes = try Plist.XML.serialize(plist)
             let xml = String(decoding: bytes, as: UTF8.self)
 
             #expect(xml.contains("<dict>"))
             #expect(xml.contains("<key>name</key>"))
             #expect(xml.contains("<string>Bob</string>"))
+        }
+
+        @Test
+        func `Serialize a whole real beyond Int range`() throws {
+            let xml = String(decoding: try Plist.XML.serialize(Plist.real(1e300)), as: UTF8.self)
+            let parsed = try Plist.XML.parse(xml)
+
+            #expect(Double(parsed) == 1e300)
+        }
+
+        @Test
+        func `Serialize a whole real within Int range keeps the decimal point`() throws {
+            let xml = String(decoding: try Plist.XML.serialize(Plist.real(42)), as: UTF8.self)
+
+            #expect(xml.contains("<real>42.0</real>"))
+        }
+
+        @Test
+        func `Serialize null to XML throws`() {
+            #expect(throws: Plist.Error.unrepresentableInXML("null")) {
+                try Plist.XML.serialize(Plist.null)
+            }
+            #expect(throws: Plist.Error.self) {
+                try Plist.XML.serialize(["key": Plist.null])
+            }
+        }
+
+        @Test
+        func `Serialize a date beyond the calendar throws`() {
+            #expect(throws: Plist.Error.self) {
+                try Plist.XML.serialize(Plist.date(secondsSinceReferenceDate: 1e300))
+            }
+            #expect(throws: Plist.Error.self) {
+                try Plist.XML.serialize(Plist.date(secondsSinceReferenceDate: .nan))
+            }
+        }
+
+        @Test
+        func `Serialize the reference date`() throws {
+            let plist = Plist.date(secondsSinceReferenceDate: 0)
+            let xml = String(decoding: try Plist.XML.serialize(plist), as: UTF8.self)
+
+            #expect(xml.contains("<date>2001-01-01T00:00:00"))
         }
 
         @Test
@@ -261,7 +304,7 @@ extension `Plist.XML Tests` {
                 "array": [1, 2, 3],
             ]
 
-            let bytes = Plist.XML.serialize(original)
+            let bytes = try Plist.XML.serialize(original)
             let parsed = try Plist.XML.parse(bytes)
 
             #expect(String(parsed["string"]) == "hello")

@@ -35,6 +35,10 @@ extension Plist {
         case typeMismatch(expected: String, got: String)
 
         case missingKey(String)
+
+        /// A value the target format has no representation for, such as
+        /// null or an out-of-range date in XML.
+        case unrepresentableInXML(String)
     }
 }
 
@@ -91,6 +95,9 @@ extension Plist.Error: CustomStringConvertible {
 
         case .missingKey(let key):
             return "Missing required key: \(key)"
+
+        case .unrepresentableInXML(let value):
+            return "Value has no XML plist representation: \(value)"
         }
     }
 }

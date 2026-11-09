@@ -14,8 +14,11 @@ extension Plist.XML {
 
 extension Plist.XML {
 
-    public static func serialize(_ plist: Plist, pretty: Bool = false) -> [UInt8] {
-        let rootElement = serializeValue(plist.value)
+    public static func serialize(
+        _ plist: Plist,
+        pretty: Bool = false
+    ) throws(Plist.Error) -> [UInt8] {
+        let rootElement = try serializeValue(plist.value)
         let plistElement = XML.element(
             "plist",
             attributes: [XML.Attribute(name: "version", value: "1.0")],
@@ -27,13 +30,16 @@ extension Plist.XML {
         return bytes
     }
 
-    public static func serializeString(_ plist: Plist, pretty: Bool = false) -> String {
-        String(decoding: serialize(plist, pretty: pretty), as: UTF8.self)
+    public static func serializeString(
+        _ plist: Plist,
+        pretty: Bool = false
+    ) throws(Plist.Error) -> String {
+        String(decoding: try serialize(plist, pretty: pretty), as: UTF8.self)
     }
 }
 
 extension Plist.XML {
-    private static func serializeValue(_ value: Plist.Value) -> XML {
+    private static func serializeValue(_ value: Plist.Value) throws(Plist.Error) -> XML {
         switch value {
         case .string(let text):
             return XML.element("string", text: text)
@@ -43,14 +49,7 @@ extension Plist.XML {
 
         case .real(let number):
 
-            let text: String
-            if number.truncatingRemainder(dividingBy: 1) == 0 {
-
-                let intPart = Int(number)
-                text = "\(intPart).0"
-            } else {
-                text = String(number)
-            }
+            let text = Int(exactly: number).map { "\($0).0" } ?? String(number)
             return XML.element("real", text: text)
 
         case .bool(let flag):
@@ -62,33 +61,40 @@ extension Plist.XML {
             return XML.element("data", text: base64String)
 
         case .date(let secondsSinceRef):
-            let text = formatDate(secondsSinceRef)
+            guard let text = formatDate(secondsSinceRef) else {
+                throw .unrepresentableInXML("date \(secondsSinceRef) seconds since 2001-01-01")
+            }
             return XML.element("date", text: text)
 
         case .array(let elements):
-            let children = elements.map { serializeValue($0) }
+            var children: [XML] = []
+            for element in elements {
+                children.append(try serializeValue(element))
+            }
             return XML.element("array", children: children)
 
         case .dictionary(let members):
             var children: [XML] = []
             for member in members {
                 children.append(XML.element("key", text: member.key))
-                children.append(serializeValue(member.value))
+                children.append(try serializeValue(member.value))
             }
             return XML.element("dict", children: children)
 
         case .null:
-
-            return XML.element("string", text: "")
+            throw .unrepresentableInXML("null")
         }
     }
 }
 
 extension Plist.XML {
-    private static func formatDate(_ secondsSinceRef: Double) -> String {
+    private static func formatDate(_ secondsSinceRef: Double) -> String? {
 
         let wholeSeconds = secondsSinceRef.rounded(.down)
-        let unixSeconds = Int(wholeSeconds) + appleReferenceEpochOffset
+        guard let whole = Int(exactly: wholeSeconds) else { return nil }
+        let shifted = whole.addingReportingOverflow(appleReferenceEpochOffset)
+        guard !shifted.overflow else { return nil }
+        let unixSeconds = shifted.partialValue
         let nanoseconds = Int((secondsSinceRef - wholeSeconds) * 1_000_000_000)
         let secondOfDay = (unixSeconds % 86_400 + 86_400) % 86_400
 
@@ -102,7 +108,7 @@ extension Plist.XML {
                 nanoseconds: nanoseconds
             )
         else {
-            return "2001-01-01T00:00:00Z"
+            return nil
         }
 
         return ISO_8601.DateTime.Formatter.format(dateTime)

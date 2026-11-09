@@ -38,10 +38,13 @@ extension Plist {
 extension Plist {
 
     @inlinable
-    public func serialize(format: Format = .xml, pretty: Bool = false) -> [UInt8] {
+    public func serialize(
+        format: Format = .xml,
+        pretty: Bool = false
+    ) throws(Plist.Error) -> [UInt8] {
         switch format {
         case .xml:
-            return XML.serialize(self, pretty: pretty)
+            return try XML.serialize(self, pretty: pretty)
 
         case .binary:
             return Binary.serialize(self)
@@ -49,8 +52,8 @@ extension Plist {
     }
 
     @inlinable
-    public func serializeXML(pretty: Bool = false) -> String {
-        String(decoding: XML.serialize(self, pretty: pretty), as: UTF8.self)
+    public func serializeXML(pretty: Bool = false) throws(Plist.Error) -> String {
+        String(decoding: try XML.serialize(self, pretty: pretty), as: UTF8.self)
     }
 }
 
@@ -66,12 +69,15 @@ extension Plist.Serializable {
     }
 
     @inlinable
-    public func plistBytes(format: Plist.Format = .xml, pretty: Bool = false) -> [UInt8] {
-        plist.serialize(format: format, pretty: pretty)
+    public func plistBytes(
+        format: Plist.Format = .xml,
+        pretty: Bool = false
+    ) throws(Plist.Error) -> [UInt8] {
+        try plist.serialize(format: format, pretty: pretty)
     }
 
     @inlinable
-    public func plistString(pretty: Bool = false) -> String {
-        plist.serializeXML(pretty: pretty)
+    public func plistString(pretty: Bool = false) throws(Plist.Error) -> String {
+        try plist.serializeXML(pretty: pretty)
     }
 }
