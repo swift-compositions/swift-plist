@@ -94,7 +94,7 @@ extension Plist.XML {
             let text = element.text.all
 
             let stripped = text.filter { !$0.isWhitespace }
-            guard let bytes = RFC_4648.Base64.decode(stripped) else {
+            guard let bytes = IETF.RFC.`4648`.Base64.decode(stripped) else {
                 throw .invalidBase64Data
             }
             return Plist(.data(bytes.map(\.underlying)))
