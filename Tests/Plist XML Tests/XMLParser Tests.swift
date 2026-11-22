@@ -272,7 +272,7 @@ extension `Plist.XML Tests` {
                 try Plist.XML.serialize(Plist.null)
             }
             #expect(throws: Plist.Error.self) {
-                try Plist.XML.serialize(["key": Plist.null])
+                try Plist.XML.serialize(Plist.dictionary([("key", Plist.null)]))
             }
         }
 
